@@ -147,6 +147,20 @@ int sys_setup()
 	return 0;
 }
 
+int sys_reset_signals()
+{
+	signal (SIGTTIN, SIG_DFL);
+	signal (SIGTTOU, SIG_DFL);
+	signal (SIGUSR1, SIG_DFL);
+	signal (SIGHUP, SIG_DFL);
+	signal (SIGQUIT, SIG_DFL);
+	signal (SIGTERM, SIG_DFL);
+	signal (SIGINT, SIG_DFL);
+	signal (SIGKILL, SIG_DFL);
+	signal (SIGALRM, SIG_DFL);
+	return 0;
+}
+
 int x_server_start ()
 {
 	if (server_pid) if (!x_server_running() ) x_server_stop();
@@ -196,40 +210,6 @@ int x_server_start ()
 	return 0;
 }
 
-static int kill_all_clients (bool top)
-{
-	Window dummywindow;
-	Window *children;
-	unsigned int nchildren;
-	unsigned int i;
-	XWindowAttributes attr;
-	Display*Dpy;
-
-	Dpy = active_display;
-	XSync (Dpy, 0);
-
-	nchildren = 0;
-	XQueryTree (Dpy, DefaultRootWindow (Dpy), &dummywindow,
-		    &dummywindow, &children, &nchildren);
-
-	if (!top) for (i = 0; i < nchildren; i++) {
-			if (XGetWindowAttributes (Dpy, children[i], &attr)
-					&& (attr.map_state == IsViewable) )
-				children[i] = XmuClientWindow (Dpy, children[i]);
-			else
-				children[i] = 0;
-		}
-
-	for (i = 0; i < nchildren; i++)
-		if (children[i])
-			XKillClient (Dpy, children[i]);
-
-	XFree ( (char *) children);
-
-	XSync (Dpy, 0);
-	return 0;
-}
-
 int x_server_stop ()
 {
 	if(!server_pid) return 0; //alrdy stopped
@@ -240,8 +220,6 @@ int x_server_stop ()
 
 	unsetenv("XAUTHORITY");
 	unsetenv("DISPLAY");
-
-	killpg (server_pid, SIGHUP);
 
 	errno = 0;
 	if (killpg (server_pid, SIGTERM) < 0) {
@@ -377,16 +355,10 @@ int sys_do_login_user (const char*username, const char*session)
 	int status = 0;
 	while (wpid != pid) wpid = wait (&status);
 
+	killpg (server_pid, SIGHUP);
+
 	active_display=XOpenDisplay(SERVER_DISPLAY);
 	if(!active_display)return -3;
-
-	kill_all_clients (false);
-	kill_all_clients (true);
-
-	/*
-	 * killpg (pid, SIGHUP);
-	 * if (killpg (pid, SIGTERM) )
-	 *	killpg (pid, SIGKILL); */
 
 	return status;
 }

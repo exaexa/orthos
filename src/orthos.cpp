@@ -70,7 +70,6 @@ int orthos_main (int argc, char**argv)
 exit:
 	ui_release();
 	x_server_stop();
-
 	free_config();
 	return 0;
 error:
@@ -81,10 +80,9 @@ error:
 
 wait_for_kill:
 	ui_release();
-	while(1) {
-		x_server_blank();
-		sleep(1);
-	}
+	x_server_stop();
+	sys_reset_signals();
+	while (1) sleep(10);
 	return 0;
 }
 
