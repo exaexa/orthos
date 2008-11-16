@@ -51,7 +51,11 @@ int orthos_main (int argc, char**argv)
 				g_command.c_str());
 			if(x_server_running()) //server dead
 				{if(g_killed) goto exit;
-				x_server_start();}
+				if(x_server_start())goto error;}
+			else if (get_bool_setting("restart_after_session")){
+				x_server_stop();
+				if(x_server_start())goto error;
+			}	
 			break;
 		case action_command:
 			sys_spawn(g_command.c_str());

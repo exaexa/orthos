@@ -79,14 +79,14 @@ const char* get_setting(const char* name)
 	return 0;
 }
 
-int get_int_seting(const char* name)
+int get_int_setting(const char* name)
 {
 	map<string,string>::iterator i = config.find(name);
 	if(i!=config.end()) return atoi(i->second.c_str());
 	return 0;
 }
 	
-int get_bool_seting(const char* name)
+bool get_bool_setting(const char* name)
 {
 	map<string,string>::iterator i = config.find(name);
 	if(i!=config.end()) return is_conf_true(i->second.c_str());
