@@ -357,6 +357,8 @@ int sys_do_login_user (const char*username, const char*session)
 
 	killpg (server_pid, SIGHUP);
 
+	sleep(1);
+
 	active_display=XOpenDisplay(SERVER_DISPLAY);
 	if(!active_display)return -3;
 
@@ -391,9 +393,9 @@ int fork_to_background()
 	pid_t p=fork();
 	if(p) return p; //also handles errors
 
-	close(0);
-	close(1);
-	close(2);
+	//close(0);
+	//close(1);
+	//close(2);
 	setsid();
 	return 0;
 }

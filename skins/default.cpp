@@ -404,7 +404,7 @@ int parse_sessions(const char*s)
 int orthos_skin_start()
 {
 	//----
-	
+	exaShutdown(); //to be sure after x restarts
 	exaSetParams(x,y,24);
 	if(!exaInit())return 1;
 

@@ -8,7 +8,6 @@
 #include <unistd.h>
 
 #include <string>
-#include <iostream>
 using namespace std;
 
 static int g_action=0;
@@ -17,6 +16,8 @@ static int g_action=0;
 static string g_login_name, g_command;
 
 static int g_killed=0;
+
+#include <stdio.h>
 
 int orthos_main (int argc, char**argv)
 {
@@ -35,14 +36,13 @@ int orthos_main (int argc, char**argv)
 
 	if(ui_init()) goto error;
 
-	while(!g_killed) {
-		if(ui_run()){
-			if(x_server_running()) {
-				if(g_killed) goto exit;
-				x_server_start();
-				continue;
-			}
-			else goto error;
+	while(g_killed) {
+		if(ui_run()) goto error;
+
+		if(x_server_running()) {
+			if(g_killed) goto exit;
+			if(x_server_start()) goto error;
+			continue;
 		}
 
 		switch(g_action) {
@@ -59,7 +59,7 @@ int orthos_main (int argc, char**argv)
 			break;
 		case action_command:
 			sys_spawn(g_command.c_str());
-			goto wait_for_kill;
+			goto terminate;
 			break;
 		default:
 			goto error;
@@ -78,14 +78,13 @@ error:
 	free_config();
 	return 1;
 
-wait_for_kill:
+terminate:
 	ui_release();
 	x_server_stop();
 	sys_reset_signals();
-	while (1) sleep(10);
+	free_config();
 	return 0;
 }
-
 
 int orthos_kill(int signal)
 {

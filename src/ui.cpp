@@ -37,13 +37,56 @@ int ui_release()
 	return 0;
 }
 
+/*
+ * in this, we desperately NEED to handle XIO errors,
+ * so they dont shot orthos off. Using setjmp() technique.
+ */
+
+#include <setjmp.h>
+
+static jmp_buf jb;
+
+#include <X11/Xlib.h>
+
+static bool reinit_next=false;
+
+#include <stdio.h>
+
+int handler(Display*d)
+{
+	printf("handling it\n");
+	longjmp(jb, 1);
+}
+
 int ui_run()
 {
-	if(s_start()) return 1;
-	int r;
+	if(setjmp(jb)){
+		printf("fini skin\n");
+		reinit_next=true;
+		ui_release();
+		return 0;
+	}
+
+	if(reinit_next){
+		printf("reload skin\n");
+		ui_init();
+		reinit_next=false;
+	}
+	
+	printf("starting skin\n");
+
+	if(s_start()) {
+		printf("start died\n");
+		return 1;
+	}
+
+	printf("running skin\n");
+	int r=0;
 	while((r=s_update())==1);
 	if(r)return 2; //update exited with error status
+	printf("stopping skin\n");
 	s_stop();
+	XSetIOErrorHandler(0);
 	return 0;
 }
 
