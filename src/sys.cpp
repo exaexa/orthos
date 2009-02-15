@@ -170,7 +170,7 @@ int x_server_start ()
 
 	pid_t p = fork();
 	if (!p) { //spawned process
-		add_xauth (SERVER_AUTH);
+		if(add_xauth (SERVER_AUTH)) exit(-2);
 		//close(0);
 		//close(1);
 		//close(2);
