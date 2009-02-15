@@ -11,6 +11,7 @@ int x_get_resolution (int*, int*);
 int x_server_blank ();
 
 int sys_setup();
+int sys_reset_signals();
 
 int sys_auth_user (const char*username, const char*pw);
 //return 0 if the login data is correct
