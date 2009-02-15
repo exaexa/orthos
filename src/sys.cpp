@@ -393,9 +393,11 @@ int fork_to_background()
 	pid_t p=fork();
 	if(p) return p; //also handles errors
 
-	close(0);
-	close(1);
-	close(2);
+	if(!get_bool_setting("debug")) {
+		close(0);
+		close(1);
+		close(2);
+	}
 	setsid();
 	return 0;
 }
