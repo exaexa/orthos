@@ -25,7 +25,7 @@ static int load_defaults()
 	config["server_auth"]="/var/run/orthos.auth";
 	config["default_path"]="/usr/local/bin:/usr/bin:/bin";
 	config["sessions"]=
-		"e16:/usr/bin/e16:twm:/usr/bin/twm:failsafe:/usr/bin/xterm";
+		"failsafe:/usr/bin/xterm";
 	config["skin"]="/etc/orthos.skin";
 
 	return 0;

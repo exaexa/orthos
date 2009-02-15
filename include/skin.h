@@ -15,12 +15,12 @@ extern "C"
 	typedef int (*orthos_validate_login_func) (const char*, const char*);
 	typedef int (*orthos_do_login_func) (const char*, const char*);
 	typedef int (*orthos_action_func) (const char*);
-	typedef const char* (*orthos_get_session_list_func)();
+	typedef const char* (*orthos_get_config_func)(const char*);
 	typedef int (*skin_init_func) (int, int,
 		orthos_validate_login_func,
 		orthos_do_login_func,
 		orthos_action_func,
-		orthos_get_session_list_func);
+		orthos_get_config_func);
 	typedef int (*skin_fini_func) ();
 	typedef int (*skin_start_func) ();
 	typedef int (*skin_stop_func) ();
@@ -31,7 +31,7 @@ extern "C"
 		orthos_validate_login_func,
 		orthos_do_login_func,
 		orthos_action_func,
-		orthos_get_session_list_func);
+		orthos_get_config_func);
 	int orthos_skin_fini();
 
 	//show start/stop
@@ -58,7 +58,7 @@ extern "C"
 //orthos_skin_fini is called, orthos gets terminated and command
 //is then executed. Usuable for shutdown/reboot things.
 
-	const char* orthos_get_session_list ();
+	const char* orthos_get_config (const char*);
 	//may return 0!
 
 } //extern "C"

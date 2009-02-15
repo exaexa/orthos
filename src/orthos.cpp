@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 #include <string>
+#include <iostream>
 using namespace std;
 
 static int g_action=0;
@@ -31,7 +32,7 @@ int orthos_main (int argc, char**argv)
 	if(x_server_start()) goto error;
 
 	//if(x_server_running()) goto error;
-
+	
 	if(ui_init()) goto error;
 
 	while(!g_killed) {
@@ -118,8 +119,8 @@ int orthos_action(const char*command)
 	return 0;
 }
 
-const char* orthos_get_session_list()
+const char* orthos_get_config(const char*x)
 {
-	return get_setting("sessions");
+	return get_setting(x);
 }
 

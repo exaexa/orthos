@@ -21,7 +21,7 @@ int Mode; //login/pw/session/wait
 static orthos_validate_login_func validate_login;
 static orthos_do_login_func do_login;
 static orthos_action_func action;
-static orthos_get_session_list_func session_list;
+static orthos_get_config_func config;
 
 static int x=0,y=0;
 
@@ -410,7 +410,9 @@ int orthos_skin_start()
 
 	exaKeyRepeat(0.4,0.05);
 
-	font.loadfromfreetype(
+	const char*font_fn=config("font");
+
+	font.loadfromfreetype(font_fn?font_fn:
 		"/usr/share/fonts/ttf-bitstream-vera/VeraMono.ttf",20);
 
 	box.setcaption(login_line);
@@ -548,14 +550,16 @@ int orthos_skin_init (int X, int Y,
 	orthos_validate_login_func f1,
 	orthos_do_login_func f2,
 	orthos_action_func f3,
-	orthos_get_session_list_func f4)
+	orthos_get_config_func f4)
 {
 	x=X;y=Y;
 	validate_login=f1;
 	do_login=f2;
 	action=f3;
-	session_list=f4;
-	parse_sessions(session_list());
+	config=f4;
+	
+	parse_sessions(config("sessions"));
+
 	//login_line=string(getenv("HOSTNAME"))+" login";
 	struct utsname u;
 	uname(&u);

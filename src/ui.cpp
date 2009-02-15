@@ -25,7 +25,9 @@ int ui_init()
 
 	s_init(x,y,orthos_validate_login,
 		orthos_do_login, orthos_action,
-		orthos_get_session_list);
+		orthos_get_config);
+
+	cout << "skin inited ok" << endl;
 	
 	return 0;
 }
