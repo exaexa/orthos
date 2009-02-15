@@ -8,7 +8,6 @@
 #include <unistd.h>
 
 #include <string>
-#include <iostream>
 using namespace std;
 
 static int g_action=0;
@@ -59,7 +58,7 @@ int orthos_main (int argc, char**argv)
 			break;
 		case action_command:
 			sys_spawn(g_command.c_str());
-			goto wait_for_kill;
+			goto terminate;
 			break;
 		default:
 			goto error;
@@ -78,11 +77,11 @@ error:
 	free_config();
 	return 1;
 
-wait_for_kill:
+terminate:
 	ui_release();
 	x_server_stop();
 	sys_reset_signals();
-	while (1) sleep(10);
+	free_config();
 	return 0;
 }
 

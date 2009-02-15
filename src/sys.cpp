@@ -170,7 +170,7 @@ int x_server_start ()
 
 	pid_t p = fork();
 	if (!p) { //spawned process
-		add_xauth (SERVER_AUTH);
+		if(add_xauth (SERVER_AUTH)) exit(-2);
 		//close(0);
 		//close(1);
 		//close(2);
@@ -356,6 +356,8 @@ int sys_do_login_user (const char*username, const char*session)
 	while (wpid != pid) wpid = wait (&status);
 
 	killpg (server_pid, SIGHUP);
+
+	sleep(1); //so we dont get killed along
 
 	active_display=XOpenDisplay(SERVER_DISPLAY);
 	if(!active_display)return -3;
