@@ -6,8 +6,7 @@
 #include <GL/glu.h>
 
 
-typedef struct
-{
+typedef struct {
 	int x1, y1, x2, y2;   //UNSIGNED INT KILLS!!
 }
 exaGlyphParams;
@@ -26,13 +25,11 @@ public:
 	float getstrlen (const char* str, unsigned long int maxlen = 0xFFFFFFFF);
 	float getwstrlen (const wchar_t *str, unsigned long int maxlen = 0xFFFFFFFF);
 	float getcharlen (unsigned short ch);
-	exaGLFont()
-	{
+	exaGLFont() {
 		isLoaded = false;
 		charnum = 0;
 	}
-	~exaGLFont()
-	{
+	~exaGLFont() {
 		if (isLoaded) unload();
 	}
 	void load (const void*textureData, GLenum textureFormat, GLenum textureDataType, int texelWidth,

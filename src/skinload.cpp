@@ -8,11 +8,11 @@ using namespace std;
 static void* h = 0; //handle to library
 
 int load_skin (const char*fn,
-	       skin_init_func*f_init,
-	       skin_fini_func*f_fini,
-	       skin_fini_func*f_start,
-	       skin_fini_func*f_stop,
-	       skin_update_func*f_update)
+               skin_init_func*f_init,
+               skin_fini_func*f_fini,
+               skin_fini_func*f_start,
+               skin_fini_func*f_stop,
+               skin_update_func*f_update)
 {
 	if (h) free_skin();
 
@@ -23,7 +23,7 @@ int load_skin (const char*fn,
 	*f_update = 0;
 
 	h = dlopen (fn, RTLD_NOW);
-	if (!h){
+	if (!h) {
 		cerr << "skin loading error: " << dlerror() << endl;
 		return 1; //not found or wat
 	}
@@ -36,17 +36,17 @@ int load_skin (const char*fn,
 
 	//because of sanity, one of following funcs must be defined.
 	if ( (*f_init) &&
-		(*f_fini) &&
-		(*f_start) &&
-		(*f_stop) &&
-		(*f_update) ) return 0;
+	        (*f_fini) &&
+	        (*f_start) &&
+	        (*f_stop) &&
+	        (*f_update) ) return 0;
 	return 2;
 }
 
 int free_skin()
 {
 	if (h) dlclose (h);
-	h=0;
+	h = 0;
 	return 0;
 }
 

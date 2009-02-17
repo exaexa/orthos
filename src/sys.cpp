@@ -80,15 +80,15 @@ static int server_timeout (int time)
 
 int x_server_blank ()
 {
-	Display*d=active_display;
-	if(!d)return 1;
-	GC gc = XCreateGC(d, DefaultRootWindow(d), 0, 0);
-	XSetForeground(d,gc,BlackPixel(d,DefaultScreen(d)));
-	XFillRectangle(d,DefaultRootWindow(d),gc,0,0,
-		XWidthOfScreen(ScreenOfDisplay(d,DefaultScreen(d))),
-		XWidthOfScreen(ScreenOfDisplay(d,DefaultScreen(d))));
-	XFlush(d);
-	XFreeGC(d,gc);
+	Display*d = active_display;
+	if (!d) return 1;
+	GC gc = XCreateGC (d, DefaultRootWindow (d), 0, 0);
+	XSetForeground (d, gc, BlackPixel (d, DefaultScreen (d) ) );
+	XFillRectangle (d, DefaultRootWindow (d), gc, 0, 0,
+	                XWidthOfScreen (ScreenOfDisplay (d, DefaultScreen (d) ) ),
+	                XWidthOfScreen (ScreenOfDisplay (d, DefaultScreen (d) ) ) );
+	XFlush (d);
+	XFreeGC (d, gc);
 	return 0;
 }
 
@@ -103,11 +103,11 @@ static int wait_for_server()
 
 static int add_xauth (const char*fn)
 {
-	unlink(fn);
+	unlink (fn);
 	string cmd =
-		string (XAUTH_PATH) + " -q -f " + fn +
-		" add " + SERVER_DISPLAY +
-		" . " + magic_cookie;
+	    string (XAUTH_PATH) + " -q -f " + fn +
+	    " add " + SERVER_DISPLAY +
+	    " . " + magic_cookie;
 
 	/*
 	 * note: system() may possibly fail to set xauth.
@@ -121,11 +121,11 @@ static int add_xauth (const char*fn)
 	return system (cmd.c_str() );
 }
 
-static void signal_handler(int n)
+static void signal_handler (int n)
 {
 	cerr << "killed by signal: " << n << endl;
 	x_server_stop();
-	orthos_kill(n);
+	orthos_kill (n);
 }
 
 static int catch_error (Display*dpy, XErrorEvent*ev)
@@ -171,7 +171,7 @@ int x_server_start ()
 
 	pid_t p = fork();
 	if (!p) { //spawned process
-		if(add_xauth (SERVER_AUTH)) exit(-2);
+		if (add_xauth (SERVER_AUTH) ) exit (-2);
 		//close(0);
 		//close(1);
 		//close(2);
@@ -179,9 +179,9 @@ int x_server_start ()
 		setpgid (0, getpid() );
 
 		string cmdline = string (XSERVER_PATH) +
-				 " " + SERVER_DISPLAY +
-				 " -auth " + SERVER_AUTH +
-				 " " + SERVER_ARGS;
+		                 " " + SERVER_DISPLAY +
+		                 " -auth " + SERVER_AUTH +
+		                 " " + SERVER_ARGS;
 
 		sys_exec (cmdline.c_str() );
 		exit (-1);
@@ -189,17 +189,17 @@ int x_server_start ()
 	if (p < 0) return -1; //too bad
 
 	server_pid = p;
-	
-	if(!server_timeout(5)) {
-		cerr <<"server timed out"<<endl;
+
+	if (!server_timeout (5) ) {
+		cerr << "server timed out" << endl;
 		return 1;
 	}
 
 	setenv ("XAUTHORITY", SERVER_AUTH, 1);
 	setenv ("DISPLAY", SERVER_DISPLAY, 1);
 
-	if (int t=wait_for_server() ) {
-		cerr << "server connection timed out "<<t<<endl;
+	if (int t = wait_for_server() ) {
+		cerr << "server connection timed out " << t << endl;
 		server_pid = 0;
 		return 2;
 	}
@@ -213,14 +213,14 @@ int x_server_start ()
 
 int x_server_stop ()
 {
-	if(!server_pid) return 0; //alrdy stopped
+	if (!server_pid) return 0; //alrdy stopped
 
-	if(active_display) XCloseDisplay(active_display);
+	if (active_display) XCloseDisplay (active_display);
 
-	active_display=0;
+	active_display = 0;
 
-	unsetenv("XAUTHORITY");
-	unsetenv("DISPLAY");
+	unsetenv ("XAUTHORITY");
+	unsetenv ("DISPLAY");
 
 	errno = 0;
 	if (killpg (server_pid, SIGTERM) < 0) {
@@ -242,9 +242,9 @@ int x_server_stop ()
 		return -2;
 
 	//evarything ouk
-	server_pid=0;
+	server_pid = 0;
 
-	unlink(SERVER_AUTH);
+	unlink (SERVER_AUTH);
 
 	return 0;
 }
@@ -260,12 +260,13 @@ int x_server_running ()
 int x_get_resolution (int*x, int*y)
 {
 	XWindowAttributes attribs;
-	*x=0;*y=0;
-	Display*d=active_display;
-	if(!d)return 1;
-	XGetWindowAttributes(d,DefaultRootWindow(d),&attribs);
-	*x=attribs.width;
-	*y=attribs.height;
+	*x = 0;
+	*y = 0;
+	Display*d = active_display;
+	if (!d) return 1;
+	XGetWindowAttributes (d, DefaultRootWindow (d), &attribs);
+	*x = attribs.width;
+	*y = attribs.height;
 	return 0;
 }
 
@@ -295,8 +296,8 @@ int sys_do_login_user (const char*username, const char*session)
 {
 	if (!server_pid) return -2; //server lack lol.
 	x_server_blank();
-	XCloseDisplay(active_display); //server killing protection
-	active_display=0;
+	XCloseDisplay (active_display); //server killing protection
+	active_display = 0;
 
 	struct passwd*pw;
 
@@ -318,7 +319,7 @@ int sys_do_login_user (const char*username, const char*session)
 
 		string xauth_file = string (pw->pw_dir) + "/.Xauthority";
 
-		chdir(pw->pw_dir);
+		chdir (pw->pw_dir);
 
 		//set all the environment (we shall inherit the rest)
 		setenv ("HOME", pw->pw_dir, 1);
@@ -333,8 +334,8 @@ int sys_do_login_user (const char*username, const char*session)
 		//switch UID and stuff
 
 		if	(initgroups (pw->pw_name, pw->pw_gid) ||
-				setgid (pw->pw_gid) ||
-				setuid (pw->pw_uid) )
+		        setgid (pw->pw_gid) ||
+		        setuid (pw->pw_uid) )
 
 			exit (-1);
 
@@ -343,7 +344,7 @@ int sys_do_login_user (const char*username, const char*session)
 		add_xauth (xauth_file.c_str() );
 
 		//now charge da laz0rz and exec session.
-		sys_exec(session,pw->pw_shell,true);
+		sys_exec (session, pw->pw_shell, true);
 	}
 
 	if (pid == -1)
@@ -358,10 +359,10 @@ int sys_do_login_user (const char*username, const char*session)
 
 	killpg (server_pid, SIGHUP);
 
-	sleep(1); //so we dont get killed along
+	sleep (1); //so we dont get killed along
 
-	active_display=XOpenDisplay(SERVER_DISPLAY);
-	if(!active_display)return -3;
+	active_display = XOpenDisplay (SERVER_DISPLAY);
+	if (!active_display) return -3;
 
 	return status;
 }
@@ -375,29 +376,29 @@ int sys_exec (const char*cmd, const char*shell, bool login)
 
 	string a = "exec ";
 	a += cmd;
-	char*args[] = {login?(char*)((string("-")+shell).c_str()):(char*)shell, (char*)"-c", (char*) (a.c_str() ), 0};
+	char*args[] = {login ? (char*) ( (string ("-") + shell).c_str() ) : (char*) shell, (char*) "-c", (char*) (a.c_str() ), 0};
 	return execve (shell, args, environ);
 }
 
-int sys_spawn(const char*cmd, const char*shell)
+int sys_spawn (const char*cmd, const char*shell)
 {
-	pid_t p=fork();
-	if(p<0)return 1;
-	if(p) return 0;
+	pid_t p = fork();
+	if (p < 0) return 1;
+	if (p) return 0;
 	setsid();
-	if(sys_exec(cmd,shell))_exit(1);
+	if (sys_exec (cmd, shell) ) _exit (1);
 	return -1; //definately bad here!
 }
 
 int fork_to_background()
 {
-	pid_t p=fork();
-	if(p) return p; //also handles errors
+	pid_t p = fork();
+	if (p) return p; //also handles errors
 
-	if(!get_bool_setting("debug")) {
-		close(0);
-		close(1);
-		close(2);
+	if (!get_bool_setting ("debug") ) {
+		close (0);
+		close (1);
+		close (2);
 	}
 	setsid();
 	return 0;

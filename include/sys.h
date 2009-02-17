@@ -19,10 +19,10 @@ int sys_auth_user (const char*username, const char*pw);
 int sys_do_login_user (const char*username, const char*session);
 //login the user, and return 0 if the session ended correctly
 
-int sys_exec (const char*cmd, const char* shell="/bin/sh", bool login=false);
+int sys_exec (const char*cmd, const char* shell = "/bin/sh", bool login = false);
 //is not supposed to return, only on error
 
-int sys_spawn (const char*cmd, const char*shell="/bin/sh");
+int sys_spawn (const char*cmd, const char*shell = "/bin/sh");
 //forks off an exec
 
 #endif

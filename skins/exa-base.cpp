@@ -43,7 +43,7 @@ bool exaIsInit()
 
 bool exaInit()
 {
-	printf("exaInit: started!\n");
+	printf ("exaInit: started!\n");
 	int vidflags;
 	const SDL_VideoInfo *videoinfo;
 
@@ -53,14 +53,14 @@ bool exaInit()
 		printf ("exaInit: SDL_Init failed: %s\n", SDL_GetError() );
 		return false;
 	}
-	printf("exaInit: sdl_init done\n");
+	printf ("exaInit: sdl_init done\n");
 
 	videoinfo = SDL_GetVideoInfo();
 	if (!videoinfo) {
 		printf ("exaInit: SDL_GetVideoInfo failed: %s\n", SDL_GetError() );
 		return false;
 	}
-	printf("exaInit: sdl_getvideoinfo done\n");
+	printf ("exaInit: sdl_getvideoinfo done\n");
 
 	vidflags = SDL_OPENGL | SDL_GL_DOUBLEBUFFER | SDL_HWPALETTE | SDL_FULLSCREEN;
 	if (videoinfo->hw_available)
@@ -231,8 +231,7 @@ void _ProcessMouse()
 	mousex += x;
 	mousey += y;
 	mbuttonhit = 0;
-	for (i = 0;i < 8;++i)  //bitwise process button hits
-	{
+	for (i = 0;i < 8;++i) { //bitwise process button hits
 		mbuttonhit >>= 1;
 		if ( (b&1) && (! (mbuttondown&1) ) ) mbuttonhit |= 0x80;
 		b >>= 1;
@@ -426,8 +425,7 @@ int exaGetKBChars (char* charbuf) //TODO marked for deletion
 
 #pragma pack(push,1)
 
-typedef struct
-{
+typedef struct {
 	unsigned short id;
 	unsigned int fileSize;
 	unsigned short reserved[2];

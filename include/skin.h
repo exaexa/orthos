@@ -13,12 +13,12 @@ extern "C"
 	typedef int (*orthos_validate_login_func) (const char*, const char*);
 	typedef int (*orthos_do_login_func) (const char*, const char*);
 	typedef int (*orthos_action_func) (const char*);
-	typedef const char* (*orthos_get_config_func)(const char*);
+	typedef const char* (*orthos_get_config_func) (const char*);
 	typedef int (*skin_init_func) (int, int,
-		orthos_validate_login_func,
-		orthos_do_login_func,
-		orthos_action_func,
-		orthos_get_config_func);
+	                               orthos_validate_login_func,
+	                               orthos_do_login_func,
+	                               orthos_action_func,
+	                               orthos_get_config_func);
 	typedef int (*skin_fini_func) ();
 	typedef int (*skin_start_func) ();
 	typedef int (*skin_stop_func) ();
@@ -26,10 +26,10 @@ extern "C"
 
 	//load/unload
 	int orthos_skin_init (int x, int y,
-		orthos_validate_login_func,
-		orthos_do_login_func,
-		orthos_action_func,
-		orthos_get_config_func);
+	                      orthos_validate_login_func,
+	                      orthos_do_login_func,
+	                      orthos_action_func,
+	                      orthos_get_config_func);
 	int orthos_skin_fini();
 
 	//show start/stop
@@ -37,9 +37,9 @@ extern "C"
 	int orthos_skin_stop ();
 
 	int orthos_skin_update ();
-		//regular update (should draw),
-		//should return 0 when finished, 1 when need another frame,
-		//otherwise on error. Must handle timing itself.
+	//regular update (should draw),
+	//should return 0 when finished, 1 when need another frame,
+	//otherwise on error. Must handle timing itself.
 
 //these are exported to the skin:
 

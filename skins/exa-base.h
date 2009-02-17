@@ -262,9 +262,9 @@ bool exaIsKeyTyped (int key);
 void exaKeyRepeat (float delay, float repeat);
 int exaGetKBChars (char* charbuf);
 char exaEKEY2char (int ekey,
-		   bool shift = (exaIsKeyDown (EKEY_RSHIFT) ||
-				 exaIsKeyDown (EKEY_LSHIFT) ),
-		   bool capslock = exaIsKeyDown (EKEY_CAPSLOCK) );
+                   bool shift = (exaIsKeyDown (EKEY_RSHIFT) ||
+                                 exaIsKeyDown (EKEY_LSHIFT) ),
+                   bool capslock = exaIsKeyDown (EKEY_CAPSLOCK) );
 bool exaIsPrintableEKEY (int ekey);
 int exaGetMouseMove (int* x, int* y);
 bool exaIsMouseButtonHit (unsigned char button);
