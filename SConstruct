@@ -16,5 +16,9 @@ Export('env')
 objs=SConscript("src/SConscript")
 SConscript("skins/SConscript")
 env.Program("orthos",objs)
+env.Program("oskintest",
+	["skintest/main.cpp",
+	"src/skinload.cpp",
+	"src/settings.cpp"])
 
 

@@ -3,8 +3,6 @@
 #ifndef ORTHOS_SKIN_H
 #define ORTHOS_SKIN_H
 
-#include "orthos.h"
-
 extern "C"
 {
 

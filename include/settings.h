@@ -2,8 +2,6 @@
 #ifndef ORTHOS_SETTINGS_H
 #define ORTHOS_SETTINGS_H
 
-#include "orthos.h"
-
 int load_config (int argc, char**argv);
 int free_config ();
 

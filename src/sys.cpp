@@ -8,6 +8,7 @@
 
 #include "sys.h"
 #include "settings.h"
+#include "orthos.h"
 //#define _GNU_SOURCE
 
 #include <sys/types.h>

@@ -17,7 +17,6 @@ exaGLFont font;
 string login_line;
 
 int Mode; //login/pw/session/wait
-int Cred=0,Cgreen=25,Cblue=76;
 
 static orthos_validate_login_func validate_login;
 static orthos_do_login_func do_login;
@@ -25,6 +24,95 @@ static orthos_action_func action;
 static orthos_get_config_func config;
 
 static int x=0,y=0;
+
+static int Cred=6,Cgreen=16,Cblue=32;
+
+#include "vector.h"
+
+typedef struct triangle_t{
+	Vector3D a,b,c;
+	triangle_t(const Vector3D&A, const Vector3D&B,const Vector3D&C){a=A;b=B;c=C;}
+	triangle_t() {}
+} triangle;
+
+#include <list>
+using std::list;
+
+#define A 0.5
+#define B (1/(1+sqrt(5)))
+#define subdiv 2
+
+list<triangle>mesh;
+
+void prepare_sphere()
+{
+	mesh.clear();
+
+	triangle t;
+	Vector3D p1,p2,p3;
+	
+#define add(a,b,c,d,e,f,i,j,k) mesh.push_back(triangle(Vector3D(a,b,c),Vector3D(d,e,f),Vector3D(i,j,k)))
+
+	add(0,B,-A,B,A,0,-B,A,0);
+	add(0,B,A,-B,A,0,B,A,0);
+	add(0,B,A,0,-B,A,-A,0,B);
+	add(0,B,A,A,0,B,0,-B,A);
+	add(0,B,-A,0,-B,-A,A,0,-B);
+	add(0,B,-A,-A,0,-B,0,-B,-A);
+	add(0,-B,A,B,-A,0,-B,-A,0);
+	add(0,-B,-A,-B,-A,0,B,-A,0);
+	add(-B,A,0,-A,0,B,-A,0,-B);
+	add(-B,-A,0,-A,0,-B,-A,0,B);
+	add(B,A,0,A,0,-B,A,0,B);
+	add(B,-A,0,A,0,B,A,0,-B);
+	add(0,B,A,-A,0,B,-B,A,0);
+	add(0,B,A,B,A,0,A,0,B);
+	add(0,B,-A,-B,A,0,-A,0,-B);
+	add(0,B,-A,A,0,-B,B,A,0);
+	add(0,-B,-A,-A,0,-B,-B,-A,0);
+	add(0,-B,-A,B,-A,0,A,0,-B);
+	add(0,-B,A,-B,-A,0,-A,0,B);
+	add(0,-B,A,A,0,B,B,-A,0);
+
+#undef add
+
+	int step=20;
+	int j,i;
+	for(j=0;j<subdiv;++j){
+		for(i=0;i<step;++i){
+			t=mesh.front();
+			mesh.pop_front();
+			p1=(t.a+t.b)/2;
+			p2=(t.b+t.c)/2;
+			p3=(t.c+t.a)/2;
+			mesh.push_back(triangle(p2,p1,t.b));
+			mesh.push_back(triangle(p3,p2,t.c));
+			mesh.push_back(triangle(p1,p3,t.a));
+			mesh.push_back(triangle(p1,p2,p3));
+		}
+		step*=4;
+	}
+
+	list<triangle>::iterator mi;
+	for(mi=mesh.begin();mi!=mesh.end();++mi) {
+		mi->a.normalize();
+		mi->b.normalize();
+		mi->c.normalize();
+	}
+}
+
+void do_sphere()
+{
+	list<triangle>::iterator i;
+	glBegin(GL_TRIANGLE_STRIP);
+	for(i=mesh.begin();i!=mesh.end();++i) {
+		glVertex3fv(i->a.v);
+		glVertex3fv(i->b.v);
+		glVertex3fv(i->c.v);
+	}
+	glEnd();
+}
+
 
 class Session {
 public:
@@ -446,7 +534,7 @@ int orthos_skin_update()
 	exaUpdate();
 	float time=0;
 
-	while(time<0.02){
+	while(time<0.035){
 		time+=exaGetElapsedTime();
 		exaUSleep(2000);
 	}
@@ -511,25 +599,16 @@ int orthos_skin_update()
 	glClear(GL_COLOR_BUFFER_BIT);
 	glLoadIdentity();
 
-	glTranslatef(0,0,-5);
-	glRotatef(rot,0,0,1);
-	for(int i=0;i<10;++i){
-		glBegin(GL_TRIANGLE_STRIP);
-			glColor3f(0,0,0);
-			glVertex3f(1,5,5);
-			glVertex3f(-1,5,5);
-			glColor3ub(Cred,Cgreen,Cblue);
-			glVertex3f(1,5,-1);
-			glVertex3f(-1,5,-1);
-			glColor3f(0,0,0);
-			glVertex3f(1,5,-20);
-			glVertex3f(-1,5,-20);
-		glEnd();
-		glRotatef(36,0,0,1);
-	}
+	glTranslatef(0,0,-1);
+	glRotatef(rot,1,0,0.3);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE,GL_ONE);
+	glColor3ub(Cred,Cgreen,Cblue);
+	do_sphere();
+	glDisable(GL_BLEND);
 	
 	glLoadIdentity();
-	glTranslatef(0,0,-25);
+	glTranslatef(0,-13,-25);
 	box.draw();
 	glTranslatef(0,2,0);
 	sess.draw();
@@ -568,12 +647,13 @@ int orthos_skin_init (int X, int Y,
 	struct utsname u;
 	uname(&u);
 	login_line=string(u.nodename)+" login";
+	prepare_sphere();
 	return 0;
 }
 
 int orthos_skin_fini()
 {
-
+	mesh.clear();
 	return 0;
 }
 
