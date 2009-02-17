@@ -25,7 +25,7 @@ static orthos_get_config_func config;
 
 static int x=0,y=0;
 
-static int Cred=6,Cgreen=16,Cblue=32;
+static float Cred=0.1,Cgreen=0.1,Cblue=0.1;
 
 #include "vector.h"
 
@@ -104,13 +104,17 @@ void prepare_sphere()
 void do_sphere()
 {
 	list<triangle>::iterator i;
+	glEnable(GL_POLYGON_SMOOTH);
 	glBegin(GL_TRIANGLE_STRIP);
 	for(i=mesh.begin();i!=mesh.end();++i) {
+		glColor3f(Cred,Cgreen,Cblue);
 		glVertex3fv(i->a.v);
 		glVertex3fv(i->b.v);
+		glColor3ub(0,0,0);
 		glVertex3fv(i->c.v);
 	}
 	glEnd();
+	glDisable(GL_POLYGON_SMOOTH);
 }
 
 
@@ -602,8 +606,7 @@ int orthos_skin_update()
 	glTranslatef(0,0,-1);
 	glRotatef(rot,1,0,0.3);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_ONE,GL_ONE);
-	glColor3ub(Cred,Cgreen,Cblue);
+	glBlendFunc(GL_SRC_ALPHA,GL_ONE);
 	do_sphere();
 	glDisable(GL_BLEND);
 	
@@ -640,8 +643,13 @@ int orthos_skin_init (int X, int Y,
 	
 	parse_sessions(config("sessions"));
 
+	int r=6,g=16,b=32;
+
 	if(config("color"))sscanf(config("color"),
-		"%d:%d:%d",&Cred,&Cgreen,&Cblue);
+		"%d:%d:%d",&r,&g,&b);
+	Cred=(float)r/255.0;
+	Cgreen=(float)g/255.0;
+	Cblue=(float)b/255.0;
 
 	//login_line=string(getenv("HOSTNAME"))+" login";
 	struct utsname u;
