@@ -26,6 +26,7 @@ static orthos_get_config_func config;
 static int x = 0, y = 0;
 
 static float Cred = 0.1, Cgreen = 0.1, Cblue = 0.1;
+bool invert;
 
 #include "vector.h"
 
@@ -650,6 +651,28 @@ int orthos_skin_update()
 	do_sphere();
 	glDisable (GL_BLEND);
 
+	if (invert) {
+		glPushMatrix();
+		glLoadIdentity();
+		glMatrixMode (GL_PROJECTION);
+		glPushMatrix();
+		glLoadIdentity();
+		glOrtho (0, 1, 0, 1, 1, -1);
+		glColor4f (1, 1, 1, 1);
+		glEnable (GL_BLEND);
+		glBlendFunc (GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
+		glBegin (GL_QUADS);
+		glVertex2f (0, 0);
+		glVertex2f (0, 1);
+		glVertex2f (1, 1);
+		glVertex2f (1, 0);
+		glEnd();
+		glPopMatrix();
+		glMatrixMode (GL_MODELVIEW);
+		glPopMatrix();
+	}
+
+
 	glLoadIdentity();
 	glTranslatef (0, -13, -25);
 	box.draw();
@@ -691,6 +714,10 @@ int orthos_skin_init (int X, int Y,
 	Cred = (float) r / 255.0;
 	Cgreen = (float) g / 255.0;
 	Cblue = (float) b / 255.0;
+
+	invert = false;
+	if (config ("invert") ) if (config ("invert") [0] == 'y') invert = true;
+	if (invert) printf ("yea invert!\n");
 
 	//login_line=string(getenv("HOSTNAME"))+" login";
 	struct utsname u;
