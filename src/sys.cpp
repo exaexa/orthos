@@ -94,7 +94,7 @@ int x_server_blank ()
 
 static int wait_for_server()
 {
-	for (int i = 0;i < 30;++i)
+	for (int i = 0;i < 1000;++i) // this is 10 sec
 		if ( (active_display = XOpenDisplay (SERVER_DISPLAY) ) )
 			return 0; //ok
 		else if (!server_timeout (1) ) return 2; //server died
@@ -190,7 +190,7 @@ int x_server_start ()
 
 	server_pid = p;
 
-	if (!server_timeout (5) ) {
+	if (!server_timeout (30) ) {
 		cerr << "server timed out" << endl;
 		return 1;
 	}
