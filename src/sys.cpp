@@ -326,8 +326,7 @@ int sys_do_login_user (const char*username, const char*session)
 		setenv ("SHELL", pw->pw_shell, 1);
 		setenv ("USER", pw->pw_name, 1);
 		setenv ("LOGNAME", pw->pw_name, 1);
-		//setenv ("PATH", DEFAULT_PATH, 1);
-		//path can be default ok?
+		setenv ("PATH", 0, 1);
 		setenv ("DISPLAY", SERVER_DISPLAY, 1);
 		setenv ("XAUTHORITY", xauth_file.c_str(), 1);
 
