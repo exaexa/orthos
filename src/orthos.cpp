@@ -6,6 +6,8 @@
 #include "ui.h"
 
 #include <unistd.h>
+#include <sys/wait.h>
+#include <errno.h>
 
 #include <string>
 #include <iostream>
@@ -30,59 +32,74 @@ int orthos_main (int argc, char**argv)
 
 	sys_setup();
 
-	if (x_server_start() ) goto error;
+	if (x_server_start() ) goto terminate;
 
-	//if(x_server_running()) goto error;
+	//if(x_server_running()) goto terminate;
 
-	if (ui_init() ) goto error;
+	if (ui_init() ) goto terminate;
 
 	while (!g_killed) {
-		if (ui_run() ) {
-			if (x_server_running() ) {
-				if (g_killed) goto exit;
-				x_server_start();
-				continue;
-			} else goto error;
+		int result, r;
+		int worker = fork();
+		printf ("forked off %d\n", worker);
+		if (worker < 0) goto terminate;
+		if (!worker) {
+			/*exit codes are:
+			 * 1 - fukken die
+			 * anything else - retry
+			 */
+			ui_run();
+			printf ("UI ok\n");
+			if (x_server_running() ) _exit (1);
+			switch (g_action) {
+			case action_login:
+				sys_do_login_user (
+				    g_login_name.c_str(),
+				    g_command.c_str() );
+				_exit (2);
+			case action_command:
+				sys_spawn (g_command.c_str() );
+				_exit (1);
+			default:
+				_exit (3);
+			}
 		}
 
-		switch (g_action) {
-		case action_login:
-			sys_do_login_user (g_login_name.c_str(),
-			                   g_command.c_str() );
-			if (x_server_running() ) { //server dead
-				if (g_killed) goto exit;
-				if (x_server_start() ) goto error;
+		while (1) {
+			r = waitpid (worker, &result, 0);
+			printf ("waitpid\n");
+			if (r <= 0) if (errno == EINTR) {
+					if (g_killed) {
+						kill (worker, SIGTERM);
+						printf ("killed, killing\n");
+					} else continue;
+				}
+			break;
+		}
+		printf ("waitpid done");
+		if ( (r <= 0) || g_killed) goto terminate;
+		printf ("result\n");
+		switch (result) {
+		case 1:
+			goto terminate;
+		default:
+			if (x_server_running() ) {
+				printf ("not running\n");
+				if (x_server_start() ) goto terminate;
 			} else if (get_bool_setting ("restart_after_session") ) {
 				x_server_stop();
-				if (x_server_start() ) goto error;
+				if (x_server_start() ) goto terminate;
 			}
-			break;
-		case action_command:
-			sys_spawn (g_command.c_str() );
-			goto terminate;
-			break;
-		default:
-			goto error;
-			break;
 		}
 	}
 
-exit:
-	ui_release();
-	x_server_stop();
-	free_config();
-	return 0;
-error:
-	ui_release();
-	x_server_stop();
-	free_config();
-	return 1;
-
 terminate:
+	printf ("termination\n");
 	ui_release();
 	x_server_stop();
 	sys_reset_signals();
 	free_config();
+	printf ("ok\n");
 	return 0;
 }
 

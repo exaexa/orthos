@@ -130,8 +130,16 @@ static void signal_handler (int n)
 
 static int catch_error (Display*dpy, XErrorEvent*ev)
 {
+	printf ("X error!");
 	return 0;
 }
+
+static int catch_io_error (Display*dpy)
+{
+	printf ("X IO error!");
+	return 0;
+}
+
 
 int sys_setup()
 {
@@ -145,6 +153,7 @@ int sys_setup()
 	signal (SIGKILL, signal_handler);
 	signal (SIGALRM, SIG_IGN);
 	XSetErrorHandler (catch_error);
+	XSetIOErrorHandler (catch_io_error);
 	return 0;
 }
 
