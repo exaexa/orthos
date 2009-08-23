@@ -169,6 +169,9 @@ int x_server_start ()
 
 	generate_magic_cookie();
 
+	setenv ("XAUTHORITY", SERVER_AUTH, 1);
+	setenv ("DISPLAY", SERVER_DISPLAY, 1);
+
 	pid_t p = fork();
 	if (!p) { //spawned process
 		if (add_xauth (SERVER_AUTH) ) exit (-2);
@@ -194,9 +197,6 @@ int x_server_start ()
 		cerr << "server timed out" << endl;
 		return 1;
 	}
-
-	setenv ("XAUTHORITY", SERVER_AUTH, 1);
-	setenv ("DISPLAY", SERVER_DISPLAY, 1);
 
 	if (int t = wait_for_server() ) {
 		cerr << "server connection timed out " << t << endl;
