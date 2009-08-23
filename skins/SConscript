@@ -2,9 +2,12 @@
 Import('env')
 myenv=env
 from os import listdir;
-myenv["CPPPATH"]+=["#skins/","/usr/include/freetype2"]
+myenv["CPPPATH"]+=["#skins/","/usr/include/freetype2","#skins/oglft/"]
 myenv["LIBS"]+=["GL","GLU","SDL","freetype"]
+myenv["CPPFLAGS"]=['-DOGLFT_NO_QT']
 for i in ['default','shards']:
 	env.SharedLibrary(i,[i+'.cpp','exa-base.cpp','exa-font.cpp'])
+
+env.SharedLibrary('matrix',['matrix.cpp','exa-base.cpp','oglft/OGLFT.cpp'])
 
 
