@@ -399,6 +399,16 @@ int fork_to_background()
 		close (0);
 		close (1);
 		close (2);
+
+		/* 
+		 * Bugfix by TAXI <taxi@a-city.de>
+		 * We don't close the pipes, we redirect it.
+		 * Doesn't cause breakage in poorly written programs.
+		 */
+
+	       int stdredir = open("/dev/null", O_WRONLY); // -> 0
+               dup2(stdredir, 1);
+               dup2(stdredir, 2);
 	}
 	setsid();
 	return 0;
