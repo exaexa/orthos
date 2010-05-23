@@ -337,7 +337,6 @@ int orthos_skin_init (int X, int Y,
 
 	invert = false;
 	if (config ("invert") ) if (config ("invert") [0] == 'y') invert = true;
-	if (invert) printf ("yea invert!\n");
 
 	//login_line=string(getenv("HOSTNAME"))+" login";
 	struct utsname u;
