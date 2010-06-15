@@ -35,7 +35,7 @@ void orthos_free_skin (void* handle)
 #else
 
 void* orthos_load_skin (const char*,
-	skin_init_func*, skin_fini_func*, skin_run_func*)
+                        skin_init_func*, skin_fini_func*, skin_run_func*)
 void orthos_free_skin (void*)
 
 #endif
