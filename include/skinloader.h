@@ -13,30 +13,30 @@
 #include <dlfcn.h>
 #include <stdio.h>
 
-void* orthos_load_skin (const char* filename,
-                        skin_init_func*a, skin_fini_func*b, skin_run_func*c)
+void* load_skin (const char* filename,
+                 skin_init_func*a, skin_fini_func*b, skin_run_func*c)
 {
 	void *h;
 	h = dlopen (filename, RTLD_NOW);
 	if (!h) return 0;
 
-	*a = dlsym (h, "orthos_skin_init");
-	*b = dlsym (h, "orthos_skin_fini");
-	*c = dlsym (h, "orthos_skin_run");
+	*a = dlsym (h, "skin_init");
+	*b = dlsym (h, "skin_fini");
+	*c = dlsym (h, "skin_run");
 
 	return h;
 }
 
-void orthos_free_skin (void* handle)
+void free_skin (void* handle)
 {
 	dlclose (handle);
 }
 
 #else
 
-void* orthos_load_skin (const char*,
-                        skin_init_func*, skin_fini_func*, skin_run_func*)
-void orthos_free_skin (void*)
+void* load_skin (const char*, skin_init_func*,
+                 skin_fini_func*, skin_run_func*);
+void free_skin (void*);
 
 #endif
 

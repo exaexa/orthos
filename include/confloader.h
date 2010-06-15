@@ -1,12 +1,12 @@
 
-#ifndef ORTHOS_CONFREADER_H
-#define ORTHOS_CONFREADER_H
+#ifndef ORTHOS_CONFLOADER_H
+#define ORTHOS_CONFLOADER_H
 
 #ifndef DEFAULT_ORTHOS_CONF
 #define DEFAULT_ORTHOS_CONF "/etc/orthos.conf"
 #endif
 
-#ifdef CONFREADER_IMPL
+#ifdef CONFLOADER_IMPL
 /*
  * this is another header file with a routine shared among multiple binaries.
  * Compiler nazis suffer again.
@@ -27,11 +27,10 @@ struct config_ll {
 };
 
 static char* config_data;
-static struct config_ll* parsed_config;
+static struct config_ll* parsed_config = 0;
 
 static int push_parsed_config_data (const char*k, const char*v)
 {
-
 	struct config_ll*n;
 
 	n = malloc (sizeof (struct config_ll) );
@@ -41,17 +40,27 @@ static int push_parsed_config_data (const char*k, const char*v)
 	n->value = v;
 	n->next = parsed_config;
 	parsed_config = n;
+
+	return 0;
+}
+
+static void dump_config()
+{
+	struct config_ll*p = parsed_config;
+	while (p) {
+		printf ("`%s' -> `%s'\n", p->key, p->value);
+		p = p->next;
+	}
 }
 
 static int parse_config_data (size_t size)
 {
 
-	const char*k, *v, *i, *end;
+	char*k, *v, *i, *end;
 
 	int tab;
 
 	parsed_config = 0;
-	p = &parsed_config;
 
 	i = config_data;
 	end = i + size;
@@ -80,11 +89,14 @@ static int parse_config_data (size_t size)
 			if (k && tab && (!v) ) v = i;
 			if ( (*i) && (!k) ) k = i;
 		}
+		++i;
 	}
 
 	/* note that null termination provided in caller function is
 	 * needed for this to work properly! */
 	if (k && v) push_parsed_config_data (k, v);
+
+	/* DEBUG dump_config(); */
 
 	return 0;
 }
@@ -98,6 +110,7 @@ static int free_parsed_config_data()
 		parsed_config = parsed_config->next;
 		free (p);
 	}
+	return 0;
 }
 
 int config_load()
@@ -114,19 +127,19 @@ int config_load()
 	fd = fopen (fn, "r");
 	if (!fd) return 2;
 
-	config_data = malloc (st->st_size + 1);
+	config_data = malloc (st.st_size + 1);
 
 	if (!config_data) {
 		fclose (fd);
 		return 3;
 	}
 
-	config_data[st->st_size] = 0;
+	config_data[st.st_size] = 0;
 
-	fread (config_data, st->st_size, 1, fd);
+	fread (config_data, st.st_size, 1, fd);
 	fclose (fd);
 
-	if (parse_config_data (st->st_size) ) return 4;
+	if (parse_config_data (st.st_size) ) return 4;
 	return 0;
 }
 
@@ -140,7 +153,7 @@ int config_free()
 const char* config_get (const char*key)
 {
 	struct config_ll*p = parsed_config;
-	while (p && strcpy (key, parsed_config->key) ) p = p->next;
+	while (p && strcmp (key, p->key) ) p = p->next;
 	if (p) return p->value;
 	else return 0;
 }
@@ -151,7 +164,7 @@ const char* config_get (const char*);
 int config_load();
 int config_free();
 
-#endif //CONFREADER_IMPL
+#endif //CONFLOADER_IMPL
 
 #endif
 
