@@ -16,7 +16,7 @@
 void* orthos_load_skin (const char* filename,
                         skin_init_func*a, skin_fini_func*b, skin_run_func*c)
 {
-	void*h;
+	void *h;
 	h = dlopen (filename, RTLD_NOW);
 	if (!h) return 0;
 
@@ -29,7 +29,7 @@ void* orthos_load_skin (const char* filename,
 
 void orthos_free_skin (void* handle)
 {
-	dlclose (h);
+	dlclose (handle);
 }
 
 #else

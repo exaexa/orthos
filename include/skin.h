@@ -1,8 +1,10 @@
 #ifndef ORTHOS_SKIN_H
 #define ORTHOS_SKIN_H
 
+#ifdef __cplusplus
 extern "C"
 {
+#endif
 
 	typedef int (*orthos_validate_login_func) (const char*, const char*);
 	typedef int (*orthos_do_login_func) (const char*, const char*);
@@ -31,7 +33,9 @@ extern "C"
 	int orthos_choose_action (const char* command);
 	const char* orthos_get_config (const char*);
 
+#ifdef __cplusplus
 } //extern "C"
+#endif
 
 #endif
 
