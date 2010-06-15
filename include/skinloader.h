@@ -6,6 +6,10 @@
  * this is a simple routine in header file. Compiler nazis suffer.
  */
 
+#include "skin.h"
+
+#ifdef SKINLOADER_IMPL
+
 #include <dlfcn.h>
 #include <stdio.h>
 
@@ -27,6 +31,14 @@ void orthos_free_skin (void* handle)
 {
 	dlclose (h);
 }
+
+#else
+
+void* orthos_load_skin (const char*,
+	skin_init_func*, skin_fini_func*, skin_run_func*)
+void orthos_free_skin (void*)
+
+#endif
 
 #endif
 
