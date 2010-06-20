@@ -73,7 +73,7 @@ static int parse_config_data (size_t size)
 		case '\n':
 			if (k && v) {
 				*i = 0;
-				if(push_parsed_config_data (k, v))
+				if (push_parsed_config_data (k, v) )
 					return 1;
 			}
 			k = v = 0;
@@ -95,7 +95,7 @@ static int parse_config_data (size_t size)
 
 	/* note that null termination provided in caller function is
 	 * needed for this to work properly! */
-	if (k && v) if (push_parsed_config_data (k, v)) return 1;
+	if (k && v) if (push_parsed_config_data (k, v) ) return 1;
 
 	/* DEBUG */
 	dump_config();

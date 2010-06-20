@@ -41,12 +41,12 @@ static const char* dummy_get_config (const char*s)
 
 int main()
 {
-	void* skin;
+	void*skin;
 	const char*fn;
 
-	skin_init_func f_init;
-	skin_fini_func f_fini;
-	skin_run_func f_run;
+	skin_init_func f_init = 0;
+	skin_fini_func f_fini = 0;
+	skin_run_func f_run = 0;
 
 	if (config_load() ) return 1;
 
@@ -56,28 +56,40 @@ int main()
 	printf ("using skin from %s\n", fn);
 
 	skin = load_skin (fn, &f_init, &f_fini, &f_run);
-
 	if (!skin) return 3;
 
-	if (f_init (dummy_validate_login,
-	            dummy_choose_login,
-	            dummy_choose_action,
-	            dummy_get_config) ) {
-
-		printf ("skin reports failed initialization\n");
-		goto termination;
+	if (!f_init) {
+		printf ("undefined init\n");
+		return 4;
+	}
+	if (!f_fini) {
+		printf ("undefined fini\n");
+		return 5;
+	}
+	if (!f_run) {
+		printf ("undefined run\n");
+		return 6;
 	}
 
-	if (f_run() ) {
-		printf ("skin reports failed run\n");
-		goto termination;
-	}
+	if (f_init) if (f_init (dummy_validate_login,
+		                        dummy_choose_login,
+		                        dummy_choose_action,
+		                        dummy_get_config) ) {
 
-	if (f_fini() ) printf ("skin reports failed shutdown\n");
+			printf ("skin reports failed initialization\n");
+			goto termination;
+		}
+
+	if (f_run) if (f_run() ) {
+			printf ("skin reports failed run\n");
+			goto termination;
+		}
+
+	if (f_fini) if (f_fini() ) printf ("skin reports failed shutdown\n");
 
 termination:
 
-	free_skin (skin);
+	dlclose (skin);
 	config_free();
 
 	return 0;
