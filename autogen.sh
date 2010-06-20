@@ -5,7 +5,7 @@
 
 COMMON_CPPFLAGS="-I\$(srcdir)/include/ -I/usr/local/include"
 COMMON_CFLAGS="-Wall"
-COMMON_LDFLAGS="-L/usr/local/libs"
+COMMON_LDFLAGS="-L/usr/local/lib"
 
 OUT=Makefile.am
 touch NEWS AUTHORS ChangeLog

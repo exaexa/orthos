@@ -1,6 +1,6 @@
 
-#include "skinloader.h"
 #include "confloader.h"
+#include "skinloader.h"
 
 #include "skin.h"
 
@@ -11,25 +11,25 @@
  * dummy functions exported to the tested skin
  */
 
-int dummy_validate_login (const char*a, const char*b)
+static int dummy_validate_login (const char*a, const char*b)
 {
 	printf ("skin checks auth for user `%s' password `%s'\n", a, b);
 	return strcmp (a, b);
 }
 
-int dummy_choose_login (const char*a, const char*b)
+static int dummy_choose_login (const char*a, const char*b)
 {
 	printf ("skin sets login `%s' with session: %s\n", a, b);
 	return 0;
 }
 
-int dummy_choose_action (const char*a)
+static int dummy_choose_action (const char*a)
 {
 	printf ("skin wants action: %s\n", a);
 	return 0;
 }
 
-const char* dummy_get_config (const char*s)
+static const char* dummy_get_config (const char*s)
 {
 	printf ("skin inspects setting `%s'\n", s);
 	return config_get (s);
@@ -52,6 +52,8 @@ int main()
 
 	fn = config_get ("skin");
 	if (!fn) return 2;
+
+	printf ("using skin from %s\n", fn);
 
 	skin = load_skin (fn, &f_init, &f_fini, &f_run);
 

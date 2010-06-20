@@ -10,6 +10,7 @@
 
 #ifdef SKINLOADER_IMPL
 
+#define _GNU_SOURCE
 #include <dlfcn.h>
 #include <stdio.h>
 
@@ -17,12 +18,16 @@ void* load_skin (const char* filename,
                  skin_init_func*a, skin_fini_func*b, skin_run_func*c)
 {
 	void *h;
-	h = dlopen (filename, RTLD_NOW);
-	if (!h) return 0;
 
-	*a = dlsym (h, "skin_init");
-	*b = dlsym (h, "skin_fini");
-	*c = dlsym (h, "skin_run");
+	h = dlopen (filename, RTLD_NOW);
+	if (!h) {
+		printf ("%s\n", dlerror() );
+		return 0;
+	}
+
+	*a = dlsym (h, "orthos_skin_init");
+	*b = dlsym (h, "orthos_skin_fini");
+	*c = dlsym (h, "orthos_skin_run");
 
 	return h;
 }

@@ -26,7 +26,7 @@ struct config_ll {
 	struct config_ll *next;
 };
 
-static char* config_data;
+static char* config_data = 0;
 static struct config_ll* parsed_config = 0;
 
 static int push_parsed_config_data (const char*k, const char*v)
@@ -73,7 +73,8 @@ static int parse_config_data (size_t size)
 		case '\n':
 			if (k && v) {
 				*i = 0;
-				push_parsed_config_data (k, v);
+				if(push_parsed_config_data (k, v))
+					return 1;
 			}
 			k = v = 0;
 			tab = 0;
@@ -94,9 +95,10 @@ static int parse_config_data (size_t size)
 
 	/* note that null termination provided in caller function is
 	 * needed for this to work properly! */
-	if (k && v) push_parsed_config_data (k, v);
+	if (k && v) if (push_parsed_config_data (k, v)) return 1;
 
-	/* DEBUG dump_config(); */
+	/* DEBUG */
+	dump_config();
 
 	return 0;
 }
@@ -116,15 +118,16 @@ static int free_parsed_config_data()
 int config_load()
 {
 	struct stat st;
+	const char*fn;
 	FILE*fd;
 
-	const char*fn = getenv ("ORTHOS_CONF");
+	fn = getenv ("ORTHOS_CONF");
 	if (!fn) fn = DEFAULT_ORTHOS_CONF;
 
 	if (stat (fn, &st) )
 		return 1;
 
-	fd = fopen (fn, "r");
+	fd = fopen (fn, "rb");
 	if (!fd) return 2;
 
 	config_data = malloc (st.st_size + 1);
