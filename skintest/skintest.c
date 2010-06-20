@@ -4,7 +4,40 @@
 
 #include "skin.h"
 
-#include "stdio.h"
+#include <stdio.h>
+#include <string.h>
+
+/*
+ * dummy functions exported to the tested skin
+ */
+
+int dummy_validate_login (const char*a, const char*b)
+{
+	printf ("skin checks auth for user `%s' password `%s'\n", a, b);
+	return strcmp (a, b);
+}
+
+int dummy_choose_login (const char*a, const char*b)
+{
+	printf ("skin sets login `%s' with session: %s\n", a, b);
+	return 0;
+}
+
+int dummy_choose_action (const char*a)
+{
+	printf ("skin wants action: %s\n", a);
+	return 0;
+}
+
+const char* dummy_get_config (const char*s)
+{
+	printf ("skin inspects setting `%s'\n", s);
+	return config_get (s);
+}
+
+/*
+ * main here exactly shows how the skins are handled (which can help)
+ */
 
 int main()
 {
@@ -24,10 +57,27 @@ int main()
 
 	if (!skin) return 3;
 
-	/* TODO */
+	if (f_init (dummy_validate_login,
+	            dummy_choose_login,
+	            dummy_choose_action,
+	            dummy_get_config) ) {
+
+		printf ("skin reports failed initialization\n");
+		goto termination;
+	}
+
+	if (f_run() ) {
+		printf ("skin reports failed run\n");
+		goto termination;
+	}
+
+	if (f_fini() ) printf ("skin reports failed shutdown\n");
+
+termination:
 
 	free_skin (skin);
 	config_free();
 
 	return 0;
 }
+
