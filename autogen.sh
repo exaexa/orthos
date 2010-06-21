@@ -34,16 +34,16 @@ echo "oskintest_LDADD = -ldl " >>$OUT
 
 for i in $PLUGINS ; do
 	echo "lib${i}_ladir = skins/${i}" >>$OUT
-	echo "lib${i}_la_SOURCES = `find skins/shards/ -type f -name \*.c -or -name \*.cpp`" >>$OUT
-	echo "noinst_HEADERS += `find skins/shards/ -type f -name \*.h`" >>$OUT
+	echo "lib${i}_la_SOURCES = `echo \`find skins/shards/ -type f -name \*.c -or -name \*.cpp\` `" >>$OUT
+	echo "noinst_HEADERS += `echo \`find skins/shards/ -type f -name \*.h\` `" >>$OUT
 	echo "lib${i}_la_CPPFLAGS = -I\$(srcdir)/skins/$i/ ${COMMON_CPPFLAGS}" >>$OUT
 	echo "lib${i}_la_CFLAGS = ${COMMON_CFLAGS}" >>$OUT
 	echo "lib${i}_la_LDFLAGS = ${COMMON_LDFLAGS}" >>$OUT
 	echo "lib${i}_la_LIBADD = " >>$OUT
-	[ -f src/$i/Makefile.am.extra ] &&
+	[ -f skins/$i/Makefile.am.extra ] &&
 		while read l ; do
-			[ "$l" ] && echo "${i}_${l}" >>$OUT
-		done < src/$i/Makefile.am.extra
+			[ "$l" ] && echo "lib${i}_la_${l}" >>$OUT
+		done < skins/$i/Makefile.am.extra
 done
 
 libtoolize --force && aclocal && autoconf && automake --add-missing

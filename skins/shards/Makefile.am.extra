@@ -1,0 +1,2 @@
+LDFLAGS += -lSDL -lGL -lGLU -lfreetype
+CPPFLAGS += -I/usr/include/freetype2
