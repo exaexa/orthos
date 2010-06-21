@@ -89,7 +89,7 @@ int main()
 
 termination:
 
-	dlclose (skin);
+	free_skin (skin);
 	config_free();
 
 	return 0;
