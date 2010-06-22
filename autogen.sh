@@ -16,17 +16,19 @@ cd ..
 
 echo "bin_PROGRAMS = orthos oskintest" >>$OUT
 echo "pkglib_LTLIBRARIES = `for i in ${PLUGINS}; do echo -n \"lib$i.la \" ; done`" >>$OUT
-echo "noinst_HEADERS = `echo include/*.h`" >>$OUT
+echo "noinst_HEADERS = `echo \`find include/ -type f -name \*.h \` `" >>$OUT
 
 echo "orthosdir = dm/" >>$OUT
-echo "orthos_SOURCES = `echo dm/*.c`" >>$OUT
+echo "orthos_SOURCES = `echo \`find dm/ -type f -name \*.c \` `" >>$OUT
+echo "noinst_HEADERS += `echo \`find dm/ -type f -name \*.h \` `" >>$OUT
 echo "orthos_CPPFLAGS = -I\$(srcdir)/dm/ ${COMMON_CPPFLAGS}" >>$OUT
 echo "orthos_CFLAGS = ${COMMON_CFLAGS}" >>$OUT
 echo "orthos_LDFLAGS = ${COMMON_LDFLAGS}" >>$OUT
 echo "orthos_LDADD = -lX11 -lXmu -lcrypt -ldl " >>$OUT
 
 echo "oskintestdir = src/" >>$OUT
-echo "oskintest_SOURCES = `echo skintest/*.c`" >>$OUT
+echo "oskintest_SOURCES = `echo \`find skintest/ -type f -name \*.c \` `" >>$OUT
+echo "noinst_HEADERS += `echo \`find skintest/ -type f -name \*.h \` `" >>$OUT
 echo "oskintest_CPPFLAGS = -I\$(srcdir)/skintest/ ${COMMON_CPPFLAGS}" >>$OUT
 echo "oskintest_CFLAGS = ${COMMON_CFLAGS}" >>$OUT
 echo "oskintest_LDFLAGS = ${COMMON_LDFLAGS}" >>$OUT
