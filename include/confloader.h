@@ -161,9 +161,18 @@ const char* config_get (const char*key)
 	else return 0;
 }
 
+int config_get_bool(const char*key)
+{
+	const char*r=config_get(key);
+	if(!r) return -1;
+	if((r[0]=='y')||(r[0]=='Y')) return 1;
+	return 0;
+}
+
 #else
 
 const char* config_get (const char*);
+int config_get_bool(const char*);
 int config_load();
 int config_free();
 
