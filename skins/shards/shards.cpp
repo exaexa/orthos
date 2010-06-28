@@ -535,9 +535,26 @@ int parse_sessions (const char*s)
 	return 0;
 }
 
+#include <X11/Xlib.h>
+#include <X11/Xmu/WinUtil.h>
+
+int x_get_resolution (int*x, int*y)
+{
+	XWindowAttributes attribs;
+	Display*d = XOpenDisplay(0);
+	if(!d)return 1;
+	XGetWindowAttributes(d,DefaultRootWindow(d),&attribs);
+	*x=attribs.width;
+	*y=attribs.height;
+	//no need to close the display. we won't cause X sighup itself.
+	return 0;
+}
+
 int orthos_skin_start()
 {
-	exaSetParams (1280, 800, 32); //defaults. Note this requires libSDL>=1.2.10
+	int res_x=0,res_y=0;
+	x_get_resolution(&res_x,&res_y);
+	exaSetParams (res_x, res_y, 32);
 	if (!exaInit() ) return 1;
 
 	exaKeyRepeat (0.4, 0.05);
