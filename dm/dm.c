@@ -4,6 +4,7 @@
 
 int dm_session() {
 
+	return 0;
 }
 
 int dm_run() {

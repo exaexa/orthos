@@ -1,9 +1,8 @@
 
+#include "dm.h"
 #include "util.h"
 #include "version.h"
 #include "confloader.h"
-
-#include "dm.h"
 
 #include <stdio.h>
 
