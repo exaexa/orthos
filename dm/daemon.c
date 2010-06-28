@@ -3,6 +3,8 @@
 #include "version.h"
 #include "confloader.h"
 
+#include "dm.h"
+
 #include <stdio.h>
 
 #define INFO_STRING \
@@ -35,8 +37,5 @@ int main(int argc, char**argv)
 		return 3;
 	}
 
-
-	config_free();
-
-	return 0;
+	return dm_run();
 }
