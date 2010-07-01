@@ -19,20 +19,20 @@
 "  More documentation should be available at manual page orthos(1).\n" \
 "\n"
 
-int main(int argc, char**argv)
+int main (int argc, char**argv)
 {
-	if(argc>1) {
-		printf("error: expected to run without parameters.\n" INFO_STRING);
+	if (argc > 1) {
+		printf ("error: expected to run without parameters.\n" INFO_STRING);
 		return 1;
 	}
 
-	if(config_load()) {
-		printf("error: loading configuration file failed.\n" INFO_STRING);
+	if (config_load() ) {
+		printf ("error: loading configuration file failed.\n" INFO_STRING);
 		return 2;
 	}
 
-	if(util_daemonize()) {
-		printf("error: couldn't daemonize");
+	if (util_daemonize() ) {
+		printf ("error: couldn't daemonize");
 		return 3;
 	}
 

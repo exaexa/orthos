@@ -124,16 +124,16 @@ void do_sphere()
 
 class Session
 {
-	public:
-		string name, cmd;
-		Session (const string&n, const string&c) {
-			name = n;
-			cmd = c;
-		}
-		Session (const char*n, const char*c) {
-			name = n;
-			cmd = c;
-		}
+public:
+	string name, cmd;
+	Session (const string&n, const string&c) {
+		name = n;
+		cmd = c;
+	}
+	Session (const char*n, const char*c) {
+		name = n;
+		cmd = c;
+	}
 };
 
 vector<Session> sessions;
@@ -141,78 +141,78 @@ int selected_session;
 
 class InputBox
 {
-	public:
-		string text, cap;
-		int cur;
-		float cursor_flash;
-		bool pw;
-		float color[3], dstcolor[3];
+public:
+	string text, cap;
+	int cur;
+	float cursor_flash;
+	bool pw;
+	float color[3], dstcolor[3];
 
-		InputBox() {
-			color[0] = color[1] = color[2] =
-				dstcolor[0] = dstcolor[1] = dstcolor[2] = 0.4;
+	InputBox() {
+		color[0] = color[1] = color[2] =
+		                          dstcolor[0] = dstcolor[1] = dstcolor[2] = 0.4;
 
-			cur = 0;
-			cursor_flash = 0;
-			pw = false;
-		}
+		cur = 0;
+		cursor_flash = 0;
+		pw = false;
+	}
 
-		bool update (float time);
-		void draw();
-		void clear() {
-			cap.clear();
-			text.clear();
-			cur = 0;
-		}
-		void setcolor (float r, float g, float b) {
-			dstcolor[0] = r;
-			dstcolor[1] = g;
-			dstcolor[2] = b;
-		}
-		void flash (float r, float g, float b) {
-			color[0] = r;
-			color[1] = g;
-			color[2] = b;
-		}
-		void pwmask (bool b) {
-			pw = b;
-		}
-		template <class Str> void setcaption (Str s) {
-			cap = s;
-		}
+	bool update (float time);
+	void draw();
+	void clear() {
+		cap.clear();
+		text.clear();
+		cur = 0;
+	}
+	void setcolor (float r, float g, float b) {
+		dstcolor[0] = r;
+		dstcolor[1] = g;
+		dstcolor[2] = b;
+	}
+	void flash (float r, float g, float b) {
+		color[0] = r;
+		color[1] = g;
+		color[2] = b;
+	}
+	void pwmask (bool b) {
+		pw = b;
+	}
+	template <class Str> void setcaption (Str s) {
+		cap = s;
+	}
 };
 
 class SessionBox
 {
-	public:
-		float pos, showpos, timeout;
-		bool show;
-		SessionBox() {
-			pos = selected_session;
-			show = false;
-			showpos = 0;
-			timeout = 0;
-		}
-		void update (float time);
-		void draw();
+public:
+	float pos, showpos, timeout;
+	bool show;
+	SessionBox() {
+		pos = selected_session;
+		show = false;
+		showpos = 0;
+		timeout = 0;
+	}
+	void update (float time);
+	void draw();
 };
 
 class ShutdownBox
 {
-	public:
-		bool show;
-		float timeout;
-		float showstate;
-		bool unlocked[2];
-		float color[2];
+public:
+	bool show;
+	float timeout;
+	float showstate;
+	bool unlocked[2];
+	float color[2];
 
-		ShutdownBox() {
-			show = unlocked[0] = unlocked[1] = false;
-			timeout = showstate = color[0] = color[1] = 0;
-		}
+	ShutdownBox() {
+		show = unlocked[0] = unlocked[1] = false;
+		timeout = showstate = color[0] = color[1] = 0;
+	}
 
-		void update (float time);
-		void draw();
+	void update (float time);
+	void draw();
 };
 
 void ShutdownBox::update (float time)
@@ -428,7 +428,7 @@ bool InputBox::update (float time)
 			if (exaIsPrintableEKEY (key[i]) )
 				text.insert (cur++, 1, exaEKEY2char (key[i]) );
 			break;
-	}
+		}
 
 	float r = 1 - powf (0.2, time);
 	for (int i = 0;i < 3;++i)
@@ -541,19 +541,19 @@ int parse_sessions (const char*s)
 int x_get_resolution (int*x, int*y)
 {
 	XWindowAttributes attribs;
-	Display*d = XOpenDisplay(0);
-	if(!d)return 1;
-	XGetWindowAttributes(d,DefaultRootWindow(d),&attribs);
-	*x=attribs.width;
-	*y=attribs.height;
+	Display*d = XOpenDisplay (0);
+	if (!d) return 1;
+	XGetWindowAttributes (d, DefaultRootWindow (d), &attribs);
+	*x = attribs.width;
+	*y = attribs.height;
 	//no need to close the display. we won't cause X sighup itself.
 	return 0;
 }
 
 int orthos_skin_start()
 {
-	int res_x=0,res_y=0;
-	x_get_resolution(&res_x,&res_y);
+	int res_x = 0, res_y = 0;
+	x_get_resolution (&res_x, &res_y);
 	exaSetParams (res_x, res_y, 32);
 	if (!exaInit() ) return 1;
 
@@ -562,7 +562,7 @@ int orthos_skin_start()
 	const char*font_fn = config ("font");
 
 	font.loadfromfreetype (font_fn ? font_fn :
-			"/usr/share/fonts/ttf-bitstream-vera/VeraMono.ttf", 128);
+	                       "/usr/share/fonts/ttf-bitstream-vera/VeraMono.ttf", 128);
 
 	box.setcaption (login_line);
 
@@ -606,35 +606,18 @@ int orthos_skin_update()
 
 	if (exaIsKeyHit (EKEY_RETURN) )
 		switch (Mode) {
-			case 0:
-				login = box.text;
-				Mode = 1;
-				box.clear();
-				box.setcaption ("password");
-				box.setcolor (0.2, 0.2, 0.2);
-				box.pwmask (true);
-				break;
-			case 1:
-				pw = box.text;
-				box.clear();
-				if (selected_session) {
-					if (validate_login (login.c_str(), pw.c_str() ) ) {
-						Mode = 0;
-						box.setcaption (login_line);
-						box.setcolor (0.4, 0.4, 0.4);
-						box.flash (1, 0, 0);
-						box.pwmask (false);
-					} else Mode = 3;
-				} else {
-					Mode = 2;
-					box.setcaption ("session");
-					box.setcolor (0.1, 0.1, 0.4);
-					box.pwmask (false);
-				}
-				break;
-			case 2:
-				session = box.text;
-				box.clear();
+		case 0:
+			login = box.text;
+			Mode = 1;
+			box.clear();
+			box.setcaption ("password");
+			box.setcolor (0.2, 0.2, 0.2);
+			box.pwmask (true);
+			break;
+		case 1:
+			pw = box.text;
+			box.clear();
+			if (selected_session) {
 				if (validate_login (login.c_str(), pw.c_str() ) ) {
 					Mode = 0;
 					box.setcaption (login_line);
@@ -642,18 +625,35 @@ int orthos_skin_update()
 					box.flash (1, 0, 0);
 					box.pwmask (false);
 				} else Mode = 3;
-				break;
-			case 3:
-			case 4:
-				break;
-			default:
-				Mode = 0;
-				box.clear();
-				box.setcaption (login_line);
+			} else {
+				Mode = 2;
+				box.setcaption ("session");
+				box.setcolor (0.1, 0.1, 0.4);
 				box.pwmask (false);
+			}
+			break;
+		case 2:
+			session = box.text;
+			box.clear();
+			if (validate_login (login.c_str(), pw.c_str() ) ) {
+				Mode = 0;
+				box.setcaption (login_line);
 				box.setcolor (0.4, 0.4, 0.4);
-				box.flash (0, 0, 0);
-				break;
+				box.flash (1, 0, 0);
+				box.pwmask (false);
+			} else Mode = 3;
+			break;
+		case 3:
+		case 4:
+			break;
+		default:
+			Mode = 0;
+			box.clear();
+			box.setcaption (login_line);
+			box.pwmask (false);
+			box.setcolor (0.4, 0.4, 0.4);
+			box.flash (0, 0, 0);
+			break;
 		}
 
 	glClear (GL_COLOR_BUFFER_BIT);
@@ -698,11 +698,11 @@ int orthos_skin_update()
 
 	exaglSwapBuffers();
 	switch (Mode) {
-		case 3:
-			do_login (login.c_str(), selected_session ? sessions[selected_session].cmd.c_str() : session.c_str() );
-			return 0;
-		case 4:
-			return 0;
+	case 3:
+		do_login (login.c_str(), selected_session ? sessions[selected_session].cmd.c_str() : session.c_str() );
+		return 0;
+	case 4:
+		return 0;
 	}
 	return 1;
 }
@@ -712,9 +712,9 @@ int orthos_skin_update()
 
 
 int orthos_skin_init (orthos_validate_login_func f1,
-		orthos_do_login_func f2,
-		orthos_action_func f3,
-		orthos_get_config_func f4)
+                      orthos_do_login_func f2,
+                      orthos_action_func f3,
+                      orthos_get_config_func f4)
 {
 	validate_login = f1;
 	do_login = f2;
@@ -726,7 +726,7 @@ int orthos_skin_init (orthos_validate_login_func f1,
 	int r = 6, g = 16, b = 32;
 
 	if (config ("color") ) sscanf (config ("color"),
-			"%d:%d:%d", &r, &g, &b);
+		                               "%d:%d:%d", &r, &g, &b);
 	Cred = (float) r / 255.0;
 	Cgreen = (float) g / 255.0;
 	Cblue = (float) b / 255.0;
@@ -760,7 +760,7 @@ int orthos_skin_stop()
 int orthos_skin_run()
 {
 	orthos_skin_start();
-	while(orthos_skin_update());
+	while (orthos_skin_update() );
 	orthos_skin_stop();
 }
 

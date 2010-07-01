@@ -127,8 +127,8 @@ static void _makeglyph (int i, int charsizes[128][7], GLuint* texnames, int& max
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	gluBuild2DMipmaps (GL_TEXTURE_2D, GL_RGBA,
-	              charsizes[i][2], charsizes[i][3],
-	              GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, expanded_data);
+	                   charsizes[i][2], charsizes[i][3],
+	                   GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, expanded_data);
 	free (expanded_data);
 }
 
@@ -184,7 +184,7 @@ bool exaGLFont::loadfromfreetype (const char* file, int resolution)
 
 		glEnd();
 		glPopMatrix();
-		glTranslatef ((charsizes[i][4]-charsizes[i][5])*scale, 0, 0);
+		glTranslatef ( (charsizes[i][4] - charsizes[i][5]) *scale, 0, 0);
 		//glTranslatef (charsizes[i][4]*scale, 0, 0);
 		glEndList();
 		charlen[i] = charsizes[i][4] * scale;

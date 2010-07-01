@@ -228,8 +228,7 @@ void _ProcessMouse()
 	mousex += x;
 	mousey += y;
 	mbuttonhit = 0;
-	for (i = 0;i < 8;++i)  //bitwise process button hits
-	{
+	for (i = 0;i < 8;++i) { //bitwise process button hits
 		mbuttonhit >>= 1;
 		if ( (b&1) && (! (mbuttondown&1) ) ) mbuttonhit |= 0x80;
 		b >>= 1;
@@ -423,8 +422,7 @@ int exaGetKBChars (char* charbuf) //TODO marked for deletion
 
 #pragma pack(push,1)
 
-typedef struct
-{
+typedef struct {
 	unsigned short id;
 	unsigned int fileSize;
 	unsigned short reserved[2];

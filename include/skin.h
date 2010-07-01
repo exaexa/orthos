@@ -34,7 +34,7 @@ extern "C"
 	const char* orthos_get_config (const char*);
 
 #ifdef __cplusplus
-} //extern "C"
+} /* extern "C" */
 #endif
 
 #endif
