@@ -14,6 +14,7 @@ cd skins
 PLUGINS=`echo *`
 cd ..
 
+echo "dist_noinst_SCRIPTS = autogen.sh quickstart.sh" >>$OUT
 echo "bin_PROGRAMS = orthos oskintest" >>$OUT
 echo "pkglib_LTLIBRARIES = `for i in ${PLUGINS}; do echo -n \"lib$i.la \" ; done`" >>$OUT
 echo "noinst_HEADERS = `echo \`find include/ -type f -name \*.h \` `" >>$OUT
