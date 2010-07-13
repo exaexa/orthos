@@ -5,7 +5,6 @@
 #include "confloader.h"
 #include "skinloader.h"
 
-#include <time.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <signal.h>
@@ -94,8 +93,6 @@ int dm_run()
 
 	const char* t;
 
-	struct timespec tspec;
-
 	/*
 	 * signal setup
 	 *
@@ -183,18 +180,7 @@ int dm_run()
 		}
 
 		if (xserver_pid) {
-			killpg (xserver_pid, 15);
-
-			/* we will now wait 5 seconds for X server to terminate, then kill it with 9. */
-
-			tspec.tv_sec = 5;
-			tspec.tv_nsec = 0;
-
-			while ( waitpid (xserver_pid, 0, WNOHANG) < 0 )
-				if (!nanosleep (&tspec, &tspec) ) {
-					killpg (xserver_pid, 9);
-					break;
-				}
+			xserver_stop (xserver_pid);
 			xserver_pid = 0;
 		}
 	}
