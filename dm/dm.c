@@ -5,6 +5,7 @@
 #include "confloader.h"
 #include "skinloader.h"
 
+#include <time.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <signal.h>
@@ -93,6 +94,8 @@ int dm_run()
 
 	const char* t;
 
+	struct timespec tspec;
+
 	/*
 	 * signal setup
 	 *
@@ -160,16 +163,39 @@ int dm_run()
 
 		while (! (g_killed || g_restart) ) {
 
-			if (waitpid (session_pid, 0, WNOHANG) ) {
+			if (waitpid (session_pid, 0, WNOHANG) >= 0 ) {
 				session_pid = 0;
 				g_restart = 1;
 
-			} else if (waitpid (xserver_pid, 0, WNOHANG) ) {
+			} else if (waitpid (xserver_pid, 0, WNOHANG) >= 0 ) {
 				xserver_pid = 0;
 				g_restart = 1;
 
 			} else
 				wait (0); /* wait for more awesome signals */
+		}
+
+		/* kill xserver and session. Be brutal to session, on purpose */
+
+		if (session_pid) {
+			kill (session_pid, 9);
+			session_pid = 0;
+		}
+
+		if (xserver_pid) {
+			killpg (xserver_pid, 15);
+
+			/* we will now wait 5 seconds for X server to terminate, then kill it with 9. */
+
+			tspec.tv_sec = 5;
+			tspec.tv_nsec = 0;
+
+			while ( waitpid (xserver_pid, 0, WNOHANG) < 0 )
+				if (!nanosleep (&tspec, &tspec) ) {
+					killpg (xserver_pid, 9);
+					break;
+				}
+			xserver_pid = 0;
 		}
 	}
 
